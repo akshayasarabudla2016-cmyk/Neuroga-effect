@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Neuroga Effect</title>
+    <style>
+        body {
+            background: radial-gradient(circle, #001f2f, black);
+            color: aqua;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 { font-size: 50px; text-shadow: 0 0 10px aqua; }
+        p, li { font-size: 18px; line-height: 1.5; }
+        input[type="text"], input[type="number"] { width: 200px; text-align: center; }
+        button {
+            background-color: aqua;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .theorybox {
+            border: 2px solid aqua;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 15px;
+            width: 70%;
+            background: linear-gradient(135deg, rgba(255,182,193,0.2), rgba(0,0,0,0.3));
+        }
+        .result { margin-top: 20px; font-size: 22px; }
+        .sparklea {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            background: aqua;
+            border-radius: 50%;
+            animation: float 6s infinite;
+            box-shadow: 0 0 15px aqua, 0 0 30px aqua;
+            top: 50px;
+            left: 50px;
+        }
+        @keyframes float {
+            0% {transform: translate(0,0);}
+            25% {transform: translate(200px,50px);}
+            50% {transform: translate(-150px,100px);}
+            75% {transform: translate(100px,-50px);}
+            100% {transform: translate(0,0);}
+        }
+        footer { margin-top: 50px; font-size: 14px; color: #ffb6c1; }
+        .hidden { display: none; }
+        .definitions { text-align: left; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+<h1>The Neuroga Effect</h1>
+
+<div class="theorybox">
+    <h2>Step 1: Mini Brain Tests</h2>
+    <p>Follow each mini-test to estimate your Brain Complexity (B). Be honest—your Emergence Level depends on it!</p>
+
+    <div class="definitions">
+        <strong>Formula Definitions:</strong>
+        <ul>
+            <li><strong>B</strong> = Brain Complexity (average of mini-test scores)</li>
+            <li><strong>f(c)</strong> = Cosmic Nudge (random factor influencing Emergence)</li>
+            <li><strong>E</strong> = Emergence Level (B × f(c))</li>
+        </ul>
+    </div>
+    
+    <h3>1️⃣ Reaction Test</h3>
+    <p>Click the button as fast as you can when it turns green!</p>
+    <button id="reactionBtn">Start Reaction Test</button>
+    <p id="reactionInstruction"></p>
+    
+    <h3>2️⃣ Memory Test</h3>
+    <p>Click the button to start your Memory Test!</p>
+    <button id="startMemoryBtn">Start Memory Test</button>
+    <div id="memorySequence" class="hidden" style="font-size:24px; letter-spacing:10px; margin-top:10px;"></div>
+    <input type="text" id="memoryInput" placeholder="Enter letters here" class="hidden">
+    <button id="memoryBtn" class="hidden">Submit Memory</button>
+    <p id="memoryInstruction"></p>
+    
+    <h3>3️⃣ Problem-Solving Test</h3>
+    <p>Enter your grade (e.g., 4, 6, 7, 12) and solve the multiplication problem!</p>
+    <input type="text" id="gradeInput" placeholder="Enter grade">
+    <div id="problemQuestion"></div>
+    <input type="text" id="problemInput" placeholder="Your answer">
+    <button id="problemBtn">Submit Problem</button>
+    <p id="problemInstruction"></p>
+</div>
+
+<div class="theorybox">
+    <h2>Step 2: Calculate Brain Complexity</h2>
+    <button onclick="calculateBrainComplexity()">Calculate Brain Complexity</button>
+    <p id="Bdisplay"></p>
+</div>
+
+<div class="theorybox">
+    <h2>Step 3: Name your Emergence</h2>
+    <p>After calculating Brain Complexity, type one or more words, ideas, or objects to represent your Emergence Level. For multiple items, separate them with commas.</p>
+    <p>Tips: Make it fun, creative, or cosmic!</p>
+    <input type="text" id="emergenceName" placeholder="Enter names separated by commas">
+    <button onclick="showEmergence()">Show Emergence Level</button>
+</div>
+
+<div class="theorybox result" id="result"></div>
+
+<div class="sparklea"></div>
+
+<footer>
+By Akshaya Sarabudla and Nikhila Kandula
+</footer>
+
+<script>
+let R=0, M=0, P=0, B=0, E=0, fc=0;
+
+// ===== Reaction Test =====
+let reactionBtn = document.getElementById('reactionBtn');
+let reactionInstruction = document.getElementById('reactionInstruction');
+let reactionStart = 0;
+
+reactionBtn.onclick = function startReaction(){
+    reactionBtn.disabled = true;
+    reactionInstruction.textContent = "Wait for green...";
+    reactionBtn.style.backgroundColor = "red";
+    let delay = 2000 + Math.random()*3000;
+    setTimeout(() => {
+        reactionBtn.style.backgroundColor = "green";
+        reactionBtn.textContent = "CLICK NOW!";
+        reactionInstruction.textContent = "CLICK NOW!";
+        reactionStart = performance.now();
+        reactionBtn.disabled = false;
+        reactionBtn.onclick = function(){
+            let reactionTime = performance.now() - reactionStart;
+            R = Math.max(0, 100 - reactionTime/10);
+            reactionInstruction.textContent = `Your Reaction Score: ${R.toFixed(1)}`;
+            reactionBtn.disabled = true;
+            reactionBtn.textContent = "Reaction Test Done";
+        }
+    }, delay);
+}
+
+// ===== Memory Test =====
+let startMemoryBtn = document.getElementById('startMemoryBtn');
+let memorySequence = document.getElementById('memorySequence');
+let memoryInput = document.getElementById('memoryInput');
+let memoryBtn = document.getElementById('memoryBtn');
+let memoryInstruction = document.getElementById('memoryInstruction');
+
+startMemoryBtn.onclick = function memoryTestStart(){
+    startMemoryBtn.disabled = true;
+    let letters = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    let seq = "";
+    for(let i=0;i<5;i++){ seq += letters.charAt(Math.floor(Math.random()*letters.length)); }
+
+    memorySequence.textContent = seq;
+    memorySequence.classList.remove('hidden');
+    memoryInput.classList.add('hidden');
+    memoryBtn.classList.add('hidden');
+    memoryInstruction.textContent = "Memorize the sequence!";
+    
+    setTimeout(()=>{
+        memorySequence.classList.add('hidden');
+        memoryInput.classList.remove('hidden');
+        memoryBtn.classList.remove('hidden');
+        memoryInput.value = "";
+        memoryInput.focus();
+        memoryInstruction.textContent = "Enter the letters you memorized:";
+    }, 5000);
+
+    memoryBtn.onclick = function(){
+        let input = memoryInput.value.toUpperCase();
+        let correct = 0;
+        for(let i=0;i<Math.min(seq.length,input.length);i++){
+            if(seq[i]===input[i]) correct++;
+        }
+        M = correct/seq.length*100;
+        memoryInstruction.textContent = `Your Memory Score: ${M.toFixed(1)}`;
+        memoryBtn.disabled = true;
+    }
+}
+
+// ===== Problem-Solving Test =====
+let problemQuestion = document.getElementById('problemQuestion');
+let problemInput = document.getElementById('problemInput');
+let problemBtn = document.getElementById('problemBtn');
+let problemInstruction = document.getElementById('problemInstruction');
+let a=0, b=0;
+
+document.getElementById('gradeInput').oninput = function() {
+    let gradeInputVal = document.getElementById('gradeInput').value;
+    let gradeMatch = gradeInputVal.match(/\d+/);
+    let grade = gradeMatch ? parseInt(gradeMatch[0]) : 4;
+
+    if(grade>=4 && grade<=6){ // 2-digit x 2-digit
+        a=Math.floor(Math.random()*40 + 10);
+        b=Math.floor(Math.random()*40 + 10);
+    } else if(grade>=7 && grade<=8){ // 3-digit x 2-digit
+        a=Math.floor(Math.random()*900 + 100);
+        b=Math.floor(Math.random()*90 + 10);
+    } else if(grade>=9){ // 3-digit x 3-digit
+        a=Math.floor(Math.random()*900 + 100);
+        b=Math.floor(Math.random()*900 + 100);
+    } else { // fallback
+        a=12; b=12;
+    }
+
+    problemQuestion.textContent = `Solve: ${a} × ${b}`;
+    problemInput.value="";
+    problemInstruction.textContent="";
+}
+
+problemBtn.onclick = function() {
+    if(a===0 && b===0){ 
+        problemInstruction.textContent = "Enter your grade first!";
+        return;
+    }
+
+    let userInput = problemInput.value.trim();
+
+    if(userInput === ""){
+        problemInstruction.textContent = "Incomplete — please enter an answer.";
+        P = 0;
+        return;
+    }
+
+    let userAnswer = parseInt(userInput);
+
+    if(userAnswer === a*b){
+        P = 100;
+        problemInstruction.textContent = "Correct! Problem-Solving Score: 100";
+    } else {
+        P = Math.max(0, 50 - Math.abs(userAnswer - a*b)*0.5);
+        problemInstruction.textContent = `Incorrect. Problem-Solving Score: ${P.toFixed(1)}`;
+    }
+}
+
+// ===== Calculate Brain Complexity =====
+function calculateBrainComplexity() {
+    // Use 0 for any incomplete mini-test
+    let rVal = isNaN(R) || R===0 ? 0 : R;
+    let mVal = isNaN(M) || M===0 ? 0 : M;
+    let pVal = isNaN(P) || P===0 ? 0 : P;
+
+    fc = Math.random();  // Cosmic Nudge
+    B = (rVal + mVal + pVal)/3;
+    E = fc*B;
+
+    document.getElementById('Bdisplay').innerHTML = 
+        `<strong>Brain Complexity (B)</strong> = ${B.toFixed(2)}, 
+         <strong>Cosmic Nudge (f(c))</strong> = ${fc.toFixed(2)}`;
+
+    document.getElementById('result').innerHTML = `<strong>Now go to Step 3 to name your Emergence!</strong>`;
+    updateSparklea(E);
+}
+
+// ===== Show Emergence =====
+function showEmergence(){
+    if(B===0){ alert("Calculate Brain Complexity first!"); return; }
+    let names = document.getElementById('emergenceName').value.split(',');
+    let output = `<strong>Brain Complexity (B)</strong> = ${B.toFixed(2)}<br>
+                  <strong>Cosmic Nudge (f(c))</strong> = ${fc.toFixed(2)}<br>
+                  <strong>Emergence Level (E)</strong> = ${E.toFixed(2)}<br>`;
+    names.forEach(n=>{
+        let trimmed = n.trim();
+        if(trimmed) output += `<strong>${trimmed}</strong> is now your Emergence!<br>`;
+    });
+    document.getElementById('result').innerHTML = output;
+    updateSparklea(E);
+}
+
+// ===== Sparklea update =====
+function updateSparklea(E){
+    let sparklea = document.querySelector('.sparklea');
+    let glowSize = 30 + E*0.5;
+    sparklea.style.width = glowSize+'px';
+    sparklea.style.height = glowSize+'px';
+    sparklea.style.boxShadow = `0 0 ${glowSize/2}px aqua, 0 0 ${glowSize}px aqua`;
+}
+</script>
+
+</body>
+</html>
